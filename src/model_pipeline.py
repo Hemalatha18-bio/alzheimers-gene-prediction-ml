@@ -105,13 +105,13 @@ def main():
 
     Replace 'example_feature_matrix.csv' with the actual processed dataset path.
     """
-    file_path = "example_feature_matrix.csv"
+    file_path = "data/example_feature_matrix.csv"
 
     print("Loading data...")
     data = load_data(file_path)
 
     print("Preprocessing data...")
-    X, y, pca_model = preprocess_data(data)
+    X, y, pca_model = preprocess_data(data, , n_components=2)
 
     print("Training models...")
     results = train_models(X, y)
