@@ -145,12 +145,20 @@ alzheimers-gene-prediction-ml/
 │
 ├── README.md
 ├── data_description.md
-├── notebooks/
-├── src/
-├── figures/
-├── results/
-├── reports/
 ├── requirements.txt
+├── notebooks/
+│   └── README.md
+├── src/
+│   ├── model_pipeline.py
+│   └── visualize_results.py
+├── figures/
+│   └── workflow_description.md
+├── results/
+│   └── results_summary.md
+├── reports/
+│   └── project_report.md
+├── data/
+│   └── example_feature_matrix.csv
 └── LICENSE
 ```
 
