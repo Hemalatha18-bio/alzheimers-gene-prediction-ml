@@ -1,60 +1,99 @@
-"""
-Visualization script for Alzheimer's Disease Gene Prediction project.
+"""Visualize model metrics produced by the Alzheimer's ML demo pipeline."""
 
-This script creates simple example visualizations from demo model results.
-Author: Hemalatha Ponnam
-"""
+import argparse
+import json
+from pathlib import Path
 
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
-def plot_model_auc():
-    """
-    Create a bar plot comparing example AUC scores for ML models.
-    """
+def load_metrics(metrics_file):
+    path = Path(metrics_file)
+    if not path.exists():
+        raise FileNotFoundError(f"Metrics file not found: {metrics_file}")
 
-    results = pd.DataFrame({
-        "Model": ["Random Forest", "SVM", "XGBoost"],
-        "AUC": [0.91, 0.88, 0.93]
-    })
+    with path.open("r", encoding="utf-8") as handle:
+        metrics = json.load(handle)
+
+    if not metrics:
+        raise ValueError("Metrics file is empty.")
+    return metrics
+
+
+def metrics_to_dataframe(metrics):
+    rows = []
+    for model_name, values in metrics.items():
+        rows.append(
+            {
+                "Model": model_name,
+                "AUC": values.get("auc"),
+                "Accuracy": values.get("accuracy"),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def plot_model_auc(results, output_file):
+    if results["AUC"].isna().any():
+        raise ValueError("One or more models are missing AUC values.")
+
+    output_path = Path(output_file)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
 
     plt.figure(figsize=(8, 5))
     plt.bar(results["Model"], results["AUC"])
     plt.ylim(0, 1)
     plt.xlabel("Machine Learning Model")
     plt.ylabel("AUC Score")
-    plt.title("Example Model Performance Comparison")
+    plt.title("Model Performance Comparison")
+    plt.xticks(rotation=15, ha="right")
     plt.tight_layout()
-    plt.savefig("figures/model_auc_comparison.png", dpi=300)
-    plt.show()
+    plt.savefig(output_path, dpi=300)
+    plt.close()
 
 
-def plot_top_genes():
-    """
-    Create a bar plot showing example top-ranked genes.
-    """
+def plot_model_accuracy(results, output_file):
+    if results["Accuracy"].isna().any():
+        raise ValueError("One or more models are missing accuracy values.")
 
-    genes = pd.DataFrame({
-        "Gene": ["APOE", "BIN1", "CLU", "PICALM", "CR1"],
-        "Importance": [0.24, 0.18, 0.15, 0.12, 0.09]
-    })
+    output_path = Path(output_file)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
 
     plt.figure(figsize=(8, 5))
-    plt.bar(genes["Gene"], genes["Importance"])
-    plt.xlabel("Gene")
-    plt.ylabel("Example Feature Importance")
-    plt.title("Example Top Gene Features")
+    plt.bar(results["Model"], results["Accuracy"])
+    plt.ylim(0, 1)
+    plt.xlabel("Machine Learning Model")
+    plt.ylabel("Accuracy")
+    plt.title("Model Accuracy Comparison")
+    plt.xticks(rotation=15, ha="right")
     plt.tight_layout()
-    plt.savefig("figures/top_gene_features.png", dpi=300)
-    plt.show()
+    plt.savefig(output_path, dpi=300)
+    plt.close()
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Create figures from exported model metrics."
+    )
+    parser.add_argument(
+        "--metrics", default="results/model_metrics.json", help="Metrics JSON file."
+    )
+    parser.add_argument(
+        "--output-dir", default="figures", help="Directory for generated figures."
+    )
+    return parser.parse_args()
 
 
 def main():
-    print("Generating visualizations...")
-    plot_model_auc()
-    plot_top_genes()
-    print("Figures saved in the figures/ folder.")
+    args = parse_args()
+    metrics = load_metrics(args.metrics)
+    results = metrics_to_dataframe(metrics)
+
+    output_dir = Path(args.output_dir)
+    plot_model_auc(results, output_dir / "model_auc_comparison.png")
+    plot_model_accuracy(results, output_dir / "model_accuracy_comparison.png")
+    print(f"Figures saved in {output_dir}")
 
 
 if __name__ == "__main__":
