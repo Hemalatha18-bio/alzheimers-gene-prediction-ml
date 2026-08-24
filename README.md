@@ -6,40 +6,29 @@ This portfolio project documents a machine-learning workflow for exploring Alzhe
 
 The **public repository is a reproducible demonstration of selected workflow components**. Raw research datasets are not distributed here, and the included example feature matrix is intended for code demonstration rather than clinical or research validation.
 
-## Objectives
-
-The broader project explored how to:
-
-- integrate GWAS, GEO, and disease-gene association information;
-- harmonize high-dimensional genomic features;
-- apply preprocessing and dimensionality reduction;
-- compare machine-learning classifiers;
-- evaluate predictive performance;
-- connect computational outputs with biological interpretation; and
-- organize computational work for reproducible Linux/HPC execution.
-
 ## Public Repository Scope
 
-The code published here focuses on a compact ML demonstration using a tabular feature matrix. It currently demonstrates:
+The public demo includes:
 
 - CSV data loading and validation;
-- train/test splitting;
-- leakage-safe scaling and PCA using scikit-learn pipelines;
+- leakage-safe train/test preprocessing with scikit-learn pipelines;
 - Random Forest, SVM, and XGBoost classification;
-- AUC and accuracy calculation;
-- classification reports;
-- machine-readable JSON result export;
-- plotting of AUC and accuracy directly from exported metrics;
-- basic automated tests; and
-- a generic SLURM example for HPC execution.
+- AUC, accuracy, and classification-report export to JSON;
+- figures generated directly from exported metrics;
+- pytest-based automated tests;
+- GitHub Actions continuous integration;
+- a generic SLURM submission example;
+- a Snakemake workflow for model training and visualization;
+- a SHAP explainability demonstration using the example feature matrix; and
+- a documented GO-enrichment reproducibility template.
 
-Other components discussed in the broader project context—such as full GWAS/GEO ingestion, batch correction, SHAP analysis, GO enrichment, deep-learning experiments, and production HPC orchestration—are not fully reproduced by the current public code and should not be inferred from the demo scripts alone.
+The public examples are portfolio demonstrations. They should not be interpreted as clinical validation or as evidence for Alzheimer's disease mechanisms.
 
 ## Data Sources and Privacy
 
-The broader analysis drew on publicly available biological resources such as GWAS studies, GEO expression datasets, disease-gene association resources, Gene Ontology resources, and scientific literature.
+The broader project methodology drew on publicly available biological resources such as GWAS studies, GEO expression datasets, disease-gene association resources, Gene Ontology resources, and scientific literature.
 
-Raw research datasets are not included in this repository. Small example or synthetic files may be included solely to demonstrate code execution. See `data_description.md` for additional data notes.
+Raw research datasets are not included. Small example or synthetic files may be included solely to demonstrate code execution. See `data_description.md` for additional notes.
 
 ## Technologies
 
@@ -48,8 +37,10 @@ Raw research datasets are not included in this repository. Small example or synt
 - scikit-learn
 - XGBoost
 - matplotlib
+- SHAP
 - pytest
-- SHAP (broader project methodology)
+- Snakemake
+- GitHub Actions
 - Linux/HPC
 - SLURM
 - Git/GitHub
@@ -58,6 +49,7 @@ Raw research datasets are not included in this repository. Small example or synt
 
 ```text
 alzheimers-gene-prediction-ml/
+├── .github/workflows/ci.yml
 ├── README.md
 ├── data_description.md
 ├── requirements.txt
@@ -65,11 +57,17 @@ alzheimers-gene-prediction-ml/
 │   └── example_feature_matrix.csv
 ├── src/
 │   ├── model_pipeline.py
-│   └── visualize_results.py
+│   ├── visualize_results.py
+│   └── explain_model.py
 ├── tests/
 │   └── test_model_pipeline.py
 ├── hpc/
 │   └── run_model.slurm
+├── workflow/
+│   ├── Snakefile
+│   └── config.yaml
+├── examples/
+│   └── go_enrichment_template.md
 ├── figures/
 ├── results/
 ├── reports/
@@ -77,31 +75,21 @@ alzheimers-gene-prediction-ml/
 └── LICENSE
 ```
 
-## How to Run the Public Demo
+## How to Run
 
-### 1. Clone the repository
+### Environment
 
 ```bash
 git clone https://github.com/Hemalatha18-bio/alzheimers-gene-prediction-ml.git
 cd alzheimers-gene-prediction-ml
-```
-
-### 2. Create and activate a virtual environment
-
-```bash
 python -m venv .venv
 source .venv/bin/activate
-```
-
-On Windows, activate the environment with `.venv\\Scripts\\activate`.
-
-### 3. Install dependencies
-
-```bash
 pip install -r requirements.txt
 ```
 
-### 4. Run the model pipeline
+On Windows, activate with `.venv\\Scripts\\activate`.
+
+### Model pipeline
 
 ```bash
 python src/model_pipeline.py \
@@ -110,9 +98,9 @@ python src/model_pipeline.py \
   --output results/model_metrics.json
 ```
 
-The script splits the data before model-specific preprocessing. Scaling and PCA are fitted only using the training partition through a scikit-learn `Pipeline`, reducing preprocessing leakage into the held-out test data.
+Scaling and PCA are fitted only on training data through model pipelines to reduce preprocessing leakage into the held-out test set.
 
-### 5. Generate figures from the exported metrics
+### Visualize exported metrics
 
 ```bash
 python src/visualize_results.py \
@@ -120,61 +108,70 @@ python src/visualize_results.py \
   --output-dir figures
 ```
 
-This generates model-comparison figures from the **actual metrics exported by the pipeline**, rather than hard-coded example performance values.
-
-### 6. Run the tests
+### Run tests
 
 ```bash
 pytest -q
 ```
 
-### 7. HPC / SLURM example
+### SHAP demonstration
 
-A generic SLURM submission example is included at:
-
-```text
-hpc/run_model.slurm
+```bash
+python src/explain_model.py \
+  --input data/example_feature_matrix.csv \
+  --output figures/shap_summary.png
 ```
 
-It is intended as a portable example of how the public demo could be submitted in a SLURM-based environment. Cluster-specific resource requests, modules, environments, paths, and policies should be adjusted for the system where it is used.
+This is an explainability demonstration on example data, not a biological interpretation of Alzheimer's disease.
+
+### Snakemake workflow
+
+```bash
+snakemake --snakefile workflow/Snakefile --cores 1
+```
+
+The workflow connects the example feature matrix to model training and metric visualization. Configuration is stored in `workflow/config.yaml`.
+
+### HPC / SLURM example
+
+A generic submission script is provided at `hpc/run_model.slurm`. Cluster-specific modules, environments, resource requests, paths, and policies must be adapted to the target system.
+
+## Continuous Integration
+
+`.github/workflows/ci.yml` runs the test suite on pushes and pull requests targeting `main`. This provides an automated check that the public code remains testable as the repository changes.
+
+## Gene Ontology Enrichment
+
+`examples/go_enrichment_template.md` documents what a reproducible GO-enrichment extension should record, including the input gene list, identifier type, background universe, multiple-testing correction, database/tool versions, and complete machine-readable outputs.
+
+It intentionally does **not** contain fabricated Alzheimer's enrichment results.
 
 ## Outputs
 
-Model metrics are written to:
+Model metrics are written to `results/model_metrics.json`. Model-comparison and SHAP demonstration figures are written under `figures/` when the corresponding scripts are run.
 
-```text
-results/model_metrics.json
-```
+## Broader Project Context
 
-Generated figures are written to the selected output directory, typically:
-
-```text
-figures/
-```
-
-## Broader Project Outcomes
-
-The original project work included multi-source biological data integration, high-dimensional feature processing, model experimentation, biological interpretation, and use of Linux/HPC resources. Quantitative claims from the broader project are intentionally not presented here as reproducible public-demo results unless the corresponding data and analysis are available in this repository.
+The broader project work included multi-source biological data integration, high-dimensional feature processing, model experimentation, biological interpretation, and use of Linux/HPC resources. Quantitative claims are not presented as reproducible public-demo results unless the corresponding data and analysis are available in this repository.
 
 ## Limitations
 
 - The public demo is not a clinical prediction system.
 - Example/synthetic data cannot establish biological validity or clinical performance.
-- The public code represents selected components rather than the complete original research workflow.
-- External validation and additional reproducibility work would be required before drawing scientific conclusions.
+- SHAP explanations from demonstration data are methodological examples, not biological findings.
+- The GO-enrichment file is a reproducibility template, not an Alzheimer's enrichment result.
+- External validation would be required before drawing scientific conclusions.
 
-## Optional Future Enhancements
+## Possible Future Extensions
 
-- Add cross-validation to the public demo.
-- Add GitHub Actions CI for automated testing.
+- Add cross-validation and hyperparameter tuning.
 - Add richer logging and additional input validation.
-- Add safe, reproducible examples for SHAP explainability and biological interpretation.
-- Add example GO-enrichment outputs where data licensing and reproducibility allow.
-- Consider workflow management with Snakemake or Nextflow.
+- Add a fully reproducible GO-enrichment implementation when an appropriate public gene list and background universe are available.
+- Expand workflow orchestration if the public demo grows beyond the current compact pipeline.
 
 ## Skills Demonstrated
 
-This repository demonstrates Python-based scientific programming, machine-learning pipeline construction, high-dimensional data preprocessing, model evaluation, reproducibility practices, automated testing, result visualization, Git/GitHub organization, and familiarity with Linux/HPC and SLURM workflow concepts.
+Python scientific programming, machine-learning pipeline construction, leakage-aware preprocessing, model evaluation, explainability, automated testing, CI, workflow management, reproducibility practices, result visualization, Git/GitHub organization, and familiarity with Linux/HPC and SLURM concepts.
 
 ## Author
 
