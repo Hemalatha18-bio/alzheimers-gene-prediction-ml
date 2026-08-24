@@ -1,0 +1,2 @@
+input: data/example_feature_matrix.csv
+pca_components: 2

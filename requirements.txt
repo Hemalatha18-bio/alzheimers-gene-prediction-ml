@@ -10,3 +10,4 @@ statsmodels
 jupyter
 notebook
 pytest
+snakemake
