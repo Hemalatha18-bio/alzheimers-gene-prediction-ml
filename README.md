@@ -1,211 +1,147 @@
-# Machine Learning Pipeline for Alzheimer’s Disease Gene Prediction
+# Machine Learning Pipeline for Alzheimer's Disease Gene Prediction
 
 ## Overview
 
-This project focuses on building a machine learning pipeline to identify Alzheimer’s disease-associated genes by integrating public genomic, gene expression, and disease-association datasets. The workflow combines GWAS SNP profiles, GEO gene expression data, and DisGeNET disease-gene associations to create a unified feature set for disease gene prediction and biological interpretation.
+This portfolio project documents a machine-learning workflow for exploring Alzheimer's disease-associated genomic patterns using public biological data sources. The broader project methodology includes genomic/transcriptomic integration, dimensionality reduction, model comparison, explainability, biological interpretation, and Linux/HPC execution.
 
-The project demonstrates skills in bioinformatics, machine learning, genomic data integration, feature engineering, model evaluation, explainable AI, and biological validation.
+The **public repository is a reproducible demonstration of selected workflow components**. Raw research datasets are not distributed here, and the included example feature matrix is intended for code demonstration rather than clinical or research validation.
 
-## Objective
+## Objectives
 
-The goal of this project was to develop a reproducible machine learning workflow that could:
+The broader project explored how to:
 
-* Integrate GWAS, GEO, and DisGeNET datasets
-* Harmonize high-dimensional genomic features
-* Apply preprocessing, PCA, variance filtering, and batch correction
-* Train and compare machine learning models
-* Evaluate model performance using cross-validation
-* Use SHAP explainability to identify high-impact features
-* Interpret top genes using GO enrichment and literature review
+- integrate GWAS, GEO, and disease-gene association information;
+- harmonize high-dimensional genomic features;
+- apply preprocessing and dimensionality reduction;
+- compare machine-learning classifiers;
+- evaluate predictive performance;
+- connect computational outputs with biological interpretation; and
+- organize computational work for reproducible Linux/HPC execution.
 
-## Background
+## Public Repository Scope
 
-Alzheimer’s disease is a complex neurodegenerative disorder influenced by genetic, transcriptomic, and biological pathway-level factors. Public genomic datasets can help identify genes that may contribute to disease risk or progression, but these datasets are often high-dimensional and require careful preprocessing before machine learning can be applied.
+The code published here focuses on a compact ML demonstration using a tabular feature matrix. It currently demonstrates:
 
-This project uses machine learning to explore disease-associated genomic patterns and connect model outputs to biological interpretation.
+- CSV data loading and validation;
+- train/test splitting;
+- leakage-safe scaling and PCA using scikit-learn pipelines;
+- Random Forest, SVM, and XGBoost classification;
+- AUC and accuracy calculation;
+- classification reports; and
+- machine-readable JSON result export.
 
-## Data Sources
+Other components discussed in the broader project context—such as full GWAS/GEO ingestion, batch correction, SHAP analysis, GO enrichment, deep-learning experiments, and production HPC orchestration—are not fully reproduced by the current public code and should not be inferred from the demo scripts alone.
 
-This project used publicly available biological datasets and resources, including:
+## Data Sources and Privacy
 
-* GWAS SNP profiles related to Alzheimer’s disease
-* GEO gene expression datasets
-* DisGeNET disease-gene association data
-* Gene Ontology resources for enrichment analysis
-* Literature-based validation for biological interpretation
+The broader analysis drew on publicly available biological resources such as GWAS studies, GEO expression datasets, disease-gene association resources, Gene Ontology resources, and scientific literature.
 
-Note: Raw data files are not included in this repository. This repository focuses on the workflow, code structure, methodology, and reproducible project documentation.
+Raw research datasets are not included in this repository. Small example or synthetic files may be included solely to demonstrate code execution. See `data_description.md` for additional data notes.
 
-## Tools and Technologies
+## Technologies
 
-### Programming and Workflow
-
-* Python
-* R
-* SQL
-* Linux/HPC
-* Git/GitHub
-
-### Machine Learning
-
-* scikit-learn
-* XGBoost
-* Random Forest
-* Support Vector Machine
-* Deep learning classifiers
-* SHAP
-
-### Bioinformatics and Statistics
-
-* GWAS data processing
-* GEO gene expression analysis
-* DisGeNET
-* GO enrichment
-* PCA
-* Variance filtering
-* Batch correction
-* Feature engineering
-* Cross-validation
-
-## Workflow
-
-### 1. Data Collection
-
-Collected Alzheimer’s disease-related genomic and transcriptomic datasets from public databases. GWAS SNP profiles, GEO expression data, and DisGeNET disease associations were selected to represent different layers of disease-related biological information.
-
-### 2. Data Cleaning and Preprocessing
-
-Cleaned and standardized datasets before integration. This included checking missing values, formatting gene identifiers, removing incomplete records, and preparing feature tables for downstream analysis.
-
-### 3. Feature Harmonization
-
-Integrated multiple datasets into a unified machine learning-ready feature matrix. More than 30,000 genomic features were harmonized across the workflow.
-
-### 4. Dimensionality Reduction
-
-Applied PCA and variance filtering to reduce noise and improve computational efficiency. This step helped retain informative biological signals while reducing high-dimensional complexity.
-
-### 5. Batch Correction
-
-Applied batch correction strategies to reduce technical variation across datasets and improve reliability of downstream model training.
-
-### 6. Model Development
-
-Trained and compared multiple machine learning models, including:
-
-* Random Forest
-* XGBoost
-* Support Vector Machine
-* Deep learning classifiers
-
-### 7. Model Evaluation
-
-Used cross-validation to evaluate model performance. Models were compared using classification metrics including AUC, accuracy, sensitivity, specificity, and feature importance.
-
-### 8. Explainable AI
-
-Used SHAP explainability to identify high-impact features contributing to model predictions. This helped connect machine learning outputs to biologically meaningful genes.
-
-### 9. Biological Interpretation
-
-Performed Gene Ontology enrichment analysis and literature review to evaluate whether top-ranked genes were associated with Alzheimer’s disease mechanisms, neurodegeneration, immune response, inflammation, or related biological pathways.
-
-### 10. HPC Execution
-
-Automated data processing and model execution on Linux/HPC resources, reducing runtime from days to hours.
-
-## Results
-
-Key outcomes of the project included:
-
-* Integrated GWAS, GEO, and DisGeNET datasets into a unified pipeline
-* Harmonized 30,000+ genomic features
-* Achieved cross-validation AUC above 0.90 across Random Forest, XGBoost, and deep learning models
-* Used SHAP to identify high-impact genes
-* Used GO enrichment and literature review for biological validation
-* Reduced runtime from days to hours using HPC resources
-
-## Key Skills Demonstrated
-
-* Bioinformatics pipeline development
-* Genomic data integration
-* GWAS and gene expression analysis
-* Machine learning for biological datasets
-* Feature engineering and dimensionality reduction
-* Model evaluation and cross-validation
-* Explainable AI using SHAP
-* GO enrichment and biological interpretation
-* Linux/HPC workflow execution
-* Reproducible research documentation
+- Python
+- pandas / NumPy
+- scikit-learn
+- XGBoost
+- matplotlib
+- SHAP (broader project methodology)
+- Linux/HPC
+- Git/GitHub
 
 ## Repository Structure
 
 ```text
 alzheimers-gene-prediction-ml/
-│
 ├── README.md
 ├── data_description.md
 ├── requirements.txt
-├── notebooks/
-│   └── README.md
+├── data/
+│   └── example_feature_matrix.csv
 ├── src/
 │   ├── model_pipeline.py
 │   └── visualize_results.py
 ├── figures/
-│   └── workflow_description.md
 ├── results/
-│   └── results_summary.md
 ├── reports/
-│   └── project_report.md
-├── data/
-│   └── example_feature_matrix.csv
+├── notebooks/
 └── LICENSE
 ```
 
-## Suggested Folder Details
+## How to Run the Public Demo
 
-### notebooks/
+### 1. Clone the repository
 
-Exploratory notebooks for preprocessing, modeling, and interpretation.
+```bash
+git clone https://github.com/Hemalatha18-bio/alzheimers-gene-prediction-ml.git
+cd alzheimers-gene-prediction-ml
+```
 
-### src/
+### 2. Create and activate a virtual environment
 
-Reusable Python or R scripts for data cleaning, feature engineering, model training, and evaluation.
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
 
-### figures/
+On Windows, activate the environment with `.venv\\Scripts\\activate`.
 
-Plots such as ROC curves, PCA plots, SHAP summary plots, and GO enrichment figures.
+### 3. Install dependencies
 
-### results/
+```bash
+pip install -r requirements.txt
+```
 
-Model performance summaries, feature importance outputs, and enrichment results.
+### 4. Run the model pipeline
 
-### reports/
+```bash
+python src/model_pipeline.py \
+  --input data/example_feature_matrix.csv \
+  --pca-components 2 \
+  --output results/model_metrics.json
+```
 
-Final project report or project summary PDF.
+The script splits the data before model-specific preprocessing. Scaling and PCA are fitted only using the training partition through a scikit-learn `Pipeline`, reducing preprocessing leakage into the held-out test data.
+
+### 5. View outputs
+
+Model metrics are written to:
+
+```text
+results/model_metrics.json
+```
+
+## Visualization Note
+
+`src/visualize_results.py` currently generates **illustrative/example figures** using demonstration values. Those figures should not be interpreted as results produced by `model_pipeline.py`. A future improvement is to make the visualization script read the exported model metrics directly.
+
+## Broader Project Outcomes
+
+The original project work included multi-source biological data integration, high-dimensional feature processing, model experimentation, biological interpretation, and use of Linux/HPC resources. Quantitative claims from the broader project are intentionally not presented here as reproducible public-demo results unless the corresponding data and analysis are available in this repository.
 
 ## Limitations
 
-This project was based on public datasets, which may include technical noise, batch effects, population-specific biases, and incomplete metadata. The results should be interpreted as research-level findings and not as clinical predictions.
+- The public demo is not a clinical prediction system.
+- Example/synthetic data cannot establish biological validity or clinical performance.
+- The public code represents selected components rather than the complete original research workflow.
+- External validation and additional reproducibility work would be required before drawing scientific conclusions.
 
-## Future Improvements
+## Planned Improvements
 
-Future improvements could include:
+- Read exported metrics directly in the visualization script.
+- Add automated tests for loading, preprocessing, and output generation.
+- Add logging and more detailed input validation.
+- Add a generic SLURM example for HPC execution.
+- Add cross-validation to the public demo.
+- Add safe, reproducible examples for explainability and biological interpretation.
+- Consider workflow management with Snakemake or Nextflow.
 
-* Adding more Alzheimer’s disease datasets
-* Testing external validation cohorts
-* Incorporating more omics layers such as proteomics or epigenomics
-* Improving deep learning architectures
-* Packaging the full workflow with Snakemake or Nextflow
-* Creating an interactive dashboard for gene-level interpretation
+## Skills Demonstrated
 
-## Portfolio Summary
-
-This project demonstrates my ability to combine biological knowledge, public genomic data, machine learning, and explainable AI to analyze complex disease-related datasets. It reflects my interest in applying bioinformatics and computational biology to precision medicine, neurodegenerative disease research, and translational data science.
+This repository demonstrates Python-based scientific programming, machine-learning pipeline construction, high-dimensional data preprocessing, model evaluation, reproducibility practices, Git/GitHub organization, and familiarity with bioinformatics/HPC workflow concepts.
 
 ## Author
 
-Hemalatha Ponnam
-M.S. Bioinformatics & Computational Biology
+Hemalatha Ponnam  
+M.S. Bioinformatics & Computational Biology  
 Saint Louis University
-Email: [hema22000latha@gmail.com](mailto:hema22000latha@gmail.com)
