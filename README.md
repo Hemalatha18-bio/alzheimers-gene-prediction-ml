@@ -27,8 +27,11 @@ The code published here focuses on a compact ML demonstration using a tabular fe
 - leakage-safe scaling and PCA using scikit-learn pipelines;
 - Random Forest, SVM, and XGBoost classification;
 - AUC and accuracy calculation;
-- classification reports; and
-- machine-readable JSON result export.
+- classification reports;
+- machine-readable JSON result export;
+- plotting of AUC and accuracy directly from exported metrics;
+- basic automated tests; and
+- a generic SLURM example for HPC execution.
 
 Other components discussed in the broader project context—such as full GWAS/GEO ingestion, batch correction, SHAP analysis, GO enrichment, deep-learning experiments, and production HPC orchestration—are not fully reproduced by the current public code and should not be inferred from the demo scripts alone.
 
@@ -45,8 +48,10 @@ Raw research datasets are not included in this repository. Small example or synt
 - scikit-learn
 - XGBoost
 - matplotlib
+- pytest
 - SHAP (broader project methodology)
 - Linux/HPC
+- SLURM
 - Git/GitHub
 
 ## Repository Structure
@@ -61,6 +66,10 @@ alzheimers-gene-prediction-ml/
 ├── src/
 │   ├── model_pipeline.py
 │   └── visualize_results.py
+├── tests/
+│   └── test_model_pipeline.py
+├── hpc/
+│   └── run_model.slurm
 ├── figures/
 ├── results/
 ├── reports/
@@ -103,7 +112,33 @@ python src/model_pipeline.py \
 
 The script splits the data before model-specific preprocessing. Scaling and PCA are fitted only using the training partition through a scikit-learn `Pipeline`, reducing preprocessing leakage into the held-out test data.
 
-### 5. View outputs
+### 5. Generate figures from the exported metrics
+
+```bash
+python src/visualize_results.py \
+  --metrics results/model_metrics.json \
+  --output-dir figures
+```
+
+This generates model-comparison figures from the **actual metrics exported by the pipeline**, rather than hard-coded example performance values.
+
+### 6. Run the tests
+
+```bash
+pytest -q
+```
+
+### 7. HPC / SLURM example
+
+A generic SLURM submission example is included at:
+
+```text
+hpc/run_model.slurm
+```
+
+It is intended as a portable example of how the public demo could be submitted in a SLURM-based environment. Cluster-specific resource requests, modules, environments, paths, and policies should be adjusted for the system where it is used.
+
+## Outputs
 
 Model metrics are written to:
 
@@ -111,9 +146,11 @@ Model metrics are written to:
 results/model_metrics.json
 ```
 
-## Visualization Note
+Generated figures are written to the selected output directory, typically:
 
-`src/visualize_results.py` currently generates **illustrative/example figures** using demonstration values. Those figures should not be interpreted as results produced by `model_pipeline.py`. A future improvement is to make the visualization script read the exported model metrics directly.
+```text
+figures/
+```
 
 ## Broader Project Outcomes
 
@@ -126,19 +163,18 @@ The original project work included multi-source biological data integration, hig
 - The public code represents selected components rather than the complete original research workflow.
 - External validation and additional reproducibility work would be required before drawing scientific conclusions.
 
-## Planned Improvements
+## Optional Future Enhancements
 
-- Read exported metrics directly in the visualization script.
-- Add automated tests for loading, preprocessing, and output generation.
-- Add logging and more detailed input validation.
-- Add a generic SLURM example for HPC execution.
 - Add cross-validation to the public demo.
-- Add safe, reproducible examples for explainability and biological interpretation.
+- Add GitHub Actions CI for automated testing.
+- Add richer logging and additional input validation.
+- Add safe, reproducible examples for SHAP explainability and biological interpretation.
+- Add example GO-enrichment outputs where data licensing and reproducibility allow.
 - Consider workflow management with Snakemake or Nextflow.
 
 ## Skills Demonstrated
 
-This repository demonstrates Python-based scientific programming, machine-learning pipeline construction, high-dimensional data preprocessing, model evaluation, reproducibility practices, Git/GitHub organization, and familiarity with bioinformatics/HPC workflow concepts.
+This repository demonstrates Python-based scientific programming, machine-learning pipeline construction, high-dimensional data preprocessing, model evaluation, reproducibility practices, automated testing, result visualization, Git/GitHub organization, and familiarity with Linux/HPC and SLURM workflow concepts.
 
 ## Author
 
