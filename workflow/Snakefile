@@ -1,0 +1,24 @@
+configfile: "workflow/config.yaml"
+
+rule all:
+    input:
+        "results/model_metrics.json",
+        "figures/model_auc_comparison.png",
+        "figures/model_accuracy_comparison.png"
+
+rule train_models:
+    input:
+        config["input"]
+    output:
+        "results/model_metrics.json"
+    shell:
+        "python src/model_pipeline.py --input {input} --pca-components {config[pca_components]} --output {output}"
+
+rule visualize:
+    input:
+        "results/model_metrics.json"
+    output:
+        auc="figures/model_auc_comparison.png",
+        accuracy="figures/model_accuracy_comparison.png"
+    shell:
+        "python src/visualize_results.py --metrics {input} --output-dir figures"
