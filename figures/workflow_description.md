@@ -1,64 +1,57 @@
 # Workflow Description
 
-## Machine Learning Pipeline for Alzheimer’s Disease Gene Prediction
+## Public Demonstration
 
-The project workflow follows these major steps:
+The public workflow in this repository is a compact, reproducible example that starts from `data/example_feature_matrix.csv` and produces model metrics and visualizations.
+
+### Modeling path
 
 ```text
-Public Data Sources
-        |
-        |-- GWAS SNP Profiles
-        |-- GEO Gene Expression Data
-        |-- DisGeNET Disease-Gene Associations
-        |
-        v
-Data Cleaning and Standardization
-        |
-        |-- Missing value handling
-        |-- Gene identifier formatting
-        |-- Metadata organization
-        |
-        v
-Feature Harmonization
-        |
-        |-- Merge genomic features
-        |-- Create model-ready feature matrix
-        |-- Harmonize 30,000+ features
-        |
-        v
-Preprocessing
-        |
-        |-- Variance filtering
-        |-- PCA
-        |-- Batch correction
-        |-- Feature scaling
-        |
-        v
-Machine Learning
-        |
-        |-- Random Forest
-        |-- SVM
-        |-- XGBoost
-        |-- Deep learning classifiers
-        |
-        v
-Model Evaluation
-        |
-        |-- Cross-validation
-        |-- AUC
-        |-- Accuracy
-        |-- Sensitivity / specificity
-        |
-        v
-Explainable AI
-        |
-        |-- SHAP values
-        |-- Feature importance
-        |-- Top gene ranking
-        |
-        v
-Biological Interpretation
-        |
-        |-- GO enrichment
-        |-- Literature review
-        |-- Disease pathway interpretation
+example feature matrix
+        ↓
+train/test split
+        ↓
+scikit-learn pipeline
+(StandardScaler → PCA → classifier)
+        ↓
+Random Forest / SVM / XGBoost
+        ↓
+ROC-AUC, accuracy, classification report
+        ↓
+results/model_metrics.json
+        ↓
+model-comparison figures
+```
+
+Preprocessing is fitted within each model pipeline after the train/test split so that the held-out test data are not used to fit scaling or PCA transformations.
+
+### Explainability path
+
+```text
+example feature matrix
+        ↓
+train/test split
+        ↓
+Random Forest demonstration
+        ↓
+SHAP explanation
+        ↓
+figures/shap_summary.png
+```
+
+The SHAP figure is a methodological example generated from demonstration data. It is not evidence for Alzheimer's disease-associated genes or mechanisms.
+
+## Reproducibility Components
+
+The repository also includes:
+
+- pytest automated tests;
+- GitHub Actions continuous integration;
+- a Snakemake workflow connecting model training and visualization; and
+- a generic SLURM example for HPC-oriented execution.
+
+## Broader Context
+
+Broader Alzheimer's bioinformatics experience that motivated this repository included genomic and transcriptomic data integration, disease-gene association resources, high-dimensional feature analysis, biological interpretation, enrichment-analysis concepts, and Linux/HPC work.
+
+Those broader activities are project context rather than fully reproduced components of the current public workflow.
