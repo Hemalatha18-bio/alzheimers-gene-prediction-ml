@@ -1,124 +1,110 @@
 # Data Description
 
 ## Project
+Machine Learning Pipeline for Alzheimer's Disease Gene Prediction
 
-Machine Learning Pipeline for Alzheimer’s Disease Gene Prediction
+## Public Demo Data
 
-## Overview
+The executable public demonstration in this repository uses:
 
-This project uses public biological datasets to explore Alzheimer’s disease-associated genes through machine learning and bioinformatics analysis. The workflow integrates genomic, transcriptomic, and disease-association resources to create a unified feature set for model training and biological interpretation.
+`data/example_feature_matrix.csv`
 
-## Data Types Used
+This is a small example feature matrix intended to demonstrate code execution, testing, workflow structure, model evaluation, and explainability methods. It is not a research-scale Alzheimer's disease dataset and should not be used to draw biological or clinical conclusions.
 
-This project is based on three major types of biological data:
+The public model code expects a tabular feature matrix in which:
 
-### 1. GWAS Data
+- rows represent observations;
+- columns represent numeric input features; and
+- the target column is named `label` by default.
 
-Genome-wide association study data were used to represent genetic variants associated with Alzheimer’s disease. These data help identify SNPs and genomic regions that may be linked to disease risk.
+The example file is included so that users can run the repository without downloading large external datasets.
 
-Examples of information used from GWAS-style data:
+## What the Public Repository Does With the Data
 
-* SNP identifiers
-* Gene mappings
-* Disease-associated loci
-* Genomic features
-* Variant-level association information
+The current public implementation:
 
-### 2. GEO Gene Expression Data
+1. loads the example CSV file;
+2. validates that the required label column is present and that the table is not empty;
+3. separates input features from the label;
+4. performs a stratified train/test split;
+5. applies standardization and PCA inside scikit-learn model pipelines;
+6. trains Random Forest, Support Vector Machine, and XGBoost classifiers;
+7. exports ROC-AUC, accuracy, and classification-report metrics;
+8. generates model-comparison figures from exported metrics; and
+9. provides a separate SHAP explainability demonstration on the example feature matrix.
 
-Gene Expression Omnibus datasets were used to represent transcriptomic changes associated with Alzheimer’s disease or related biological conditions. Gene expression data help identify genes that are differentially expressed or biologically relevant in disease contexts.
+Because the example data are for software demonstration, generated metrics and feature explanations should be treated as example outputs rather than biological findings.
 
-Examples of information used from GEO-style data:
+## Broader Project Data Context
 
-* Gene expression values
-* Sample metadata
-* Disease/control grouping
-* Normalized expression matrices
-* Gene identifiers
+The broader project experience that motivated this portfolio repository involved working with or considering public biological resources such as:
 
-### 3. DisGeNET Disease-Gene Association Data
+- genome-wide association study resources;
+- GEO gene-expression datasets;
+- disease-gene association resources such as DisGeNET;
+- Gene Ontology and related annotation resources;
+- NCBI gene information; and
+- scientific literature used for biological interpretation.
 
-DisGeNET disease-gene association information was used to connect genes with known disease relevance. These associations helped support biological interpretation and feature prioritization.
+That broader context included concepts such as gene-identifier harmonization, high-dimensional feature processing, dimensionality reduction, feature engineering, biological interpretation, and enrichment analysis.
 
-Examples of information used from DisGeNET-style data:
+However, those original datasets and the complete data-integration workflow are not included in this public repository. Readers should not assume that the compact example feature matrix reproduces the original research-scale workflow.
 
-* Disease-associated genes
-* Gene-disease scores
-* Literature-supported disease associations
-* Biological relevance annotations
+## Why Original Research-Scale Data Are Not Included
 
-## Additional Biological Resources
+Research-scale biological datasets may be large, distributed across multiple public resources, governed by source-specific usage terms, or associated with project environments that are not appropriate to publish directly.
 
-The project also used biological annotation and interpretation resources such as:
+This repository therefore focuses on a small, shareable demonstration that makes the software structure and reproducibility practices visible without distributing large or restricted data.
 
-* Gene Ontology enrichment resources
-* NCBI gene information
-* Published literature
-* Disease pathway references
+## Reproducing the Public Demo
 
-## Data Availability
+No external biological dataset is required to run the included demonstration.
 
-Raw data files are not included in this repository.
+After installing the dependencies, users can execute the model pipeline with:
 
-This repository is intended to demonstrate the project workflow, methodology, analysis structure, and reproducible documentation. Public datasets should be downloaded directly from their original sources when reproducing or extending this project.
+```bash
+python src/model_pipeline.py \
+  --input data/example_feature_matrix.csv \
+  --pca-components 2 \
+  --output results/model_metrics.json
+```
 
-## Why Raw Data Is Not Included
+The SHAP demonstration can be run with:
 
-Raw data are not included because:
+```bash
+python src/explain_model.py \
+  --input data/example_feature_matrix.csv \
+  --output figures/shap_summary.png
+```
 
-* Some public datasets are large.
-* Dataset access and usage terms may vary by source.
-* Repositories should avoid unnecessary storage of large biological datasets.
-* The purpose of this repository is to document the analysis workflow and reproducible structure.
+The full demonstration workflow can also be executed through Snakemake as documented in the main `README.md`.
 
-## Reproducibility Notes
+## Extending the Repository With Public Biological Data
 
-To reproduce a similar workflow, users should:
+A future fully reproducible extension using real public biological datasets should document, at minimum:
 
-1. Download Alzheimer’s-related GWAS data from a public GWAS resource.
-2. Download Alzheimer’s-related gene expression datasets from GEO.
-3. Retrieve disease-gene association data from DisGeNET or a similar public database.
-4. Standardize gene identifiers across datasets.
-5. Merge features into a unified analysis table.
-6. Apply preprocessing, PCA, variance filtering, and batch correction.
-7. Train machine learning models.
-8. Use SHAP and GO enrichment for biological interpretation.
+1. exact dataset identifiers or accession numbers;
+2. download sources and access dates;
+3. sample inclusion and exclusion criteria;
+4. gene or feature identifier mappings;
+5. preprocessing and normalization procedures;
+6. missing-value handling;
+7. batch or cohort effects where relevant;
+8. train/test or cross-validation strategy;
+9. any feature-selection procedure;
+10. enrichment-analysis inputs and background universe; and
+11. software and database versions.
 
-## Example Feature Categories
+Any preprocessing or feature selection used for predictive modeling should be fitted within the appropriate training or cross-validation workflow to avoid information leakage.
 
-The final machine learning feature matrix may include:
+## Privacy and Responsible Use
 
-* SNP-associated gene features
-* Gene expression values
-* Disease-gene association scores
-* Normalized genomic features
-* PCA-transformed features
-* Filtered high-variance biological features
+The public example data are intended only for portfolio and software-demonstration purposes. The repository does not contain private patient records, protected health information, confidential clinical data, or unpublished lab-owned datasets.
 
-## Data Processing Summary
+Users applying the code to their own biological datasets are responsible for following the relevant data-use, privacy, licensing, and institutional requirements.
 
-The data processing workflow included:
+## Interpretation
 
-* Dataset cleaning
-* Missing value handling
-* Gene identifier standardization
-* Feature harmonization
-* Variance filtering
-* PCA
-* Batch correction
-* Model-ready table generation
+This repository demonstrates computational methods and reproducibility practices. It is not a clinical prediction tool and does not provide validated evidence for Alzheimer's disease-associated genes or mechanisms.
 
-## Ethical and Privacy Considerations
-
-This project uses public biological research datasets. No private patient records, protected health information, or confidential clinical data are included in this repository.
-
-## Suggested Citation Statement
-
-If using public datasets, cite the original data sources, including the relevant GWAS source, GEO accession numbers, DisGeNET database, and any enrichment resources used in the analysis.
-
-## Author
-
-Hemalatha Ponnam
-M.S. Bioinformatics & Computational Biology
-Saint Louis University
-Email: [hema22000latha@gmail.com](mailto:hema22000latha@gmail.com)
+For the most accurate description of the current public scope, refer to the main `README.md`, source files under `src/`, automated tests under `tests/`, and workflow definitions under `workflow/`.
