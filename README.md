@@ -2,33 +2,38 @@
 
 ## Overview
 
-This portfolio project documents a machine-learning workflow for exploring Alzheimer's disease-associated genomic patterns using public biological data sources. The broader project methodology includes genomic/transcriptomic integration, dimensionality reduction, model comparison, explainability, biological interpretation, and Linux/HPC execution.
+This portfolio repository presents a reproducible machine-learning demonstration for biological feature data, motivated by broader Alzheimer's disease bioinformatics work involving genomic, transcriptomic, and disease-gene association resources.
 
-The **public repository is a reproducible demonstration of selected workflow components**. Raw research datasets are not distributed here, and the included example feature matrix is intended for code demonstration rather than clinical or research validation.
+The **public repository intentionally focuses on a compact, executable demonstration** using an included example feature matrix. It is designed to show leakage-aware preprocessing, model comparison, explainability, testing, continuous integration, workflow management, and HPC-oriented execution practices.
 
-## Public Repository Scope
+The public example data and generated outputs are for software demonstration only. They should not be interpreted as clinical validation, biological findings, or evidence for Alzheimer's disease mechanisms.
 
-The public demo includes:
+## What the Public Repository Implements
+
+The current public demo includes:
 
 - CSV data loading and validation;
-- leakage-safe train/test preprocessing with scikit-learn pipelines;
-- Random Forest, SVM, and XGBoost classification;
-- AUC, accuracy, and classification-report export to JSON;
-- figures generated directly from exported metrics;
+- stratified train/test splitting;
+- leakage-aware preprocessing with scikit-learn pipelines;
+- standardization and PCA fitted only on training data;
+- Random Forest, Support Vector Machine, and XGBoost classification;
+- ROC-AUC, accuracy, and classification-report export to JSON;
+- figures generated from exported model metrics;
+- a SHAP explainability demonstration on the example feature matrix;
 - pytest-based automated tests;
 - GitHub Actions continuous integration;
-- a generic SLURM submission example;
-- a Snakemake workflow for model training and visualization;
-- a SHAP explainability demonstration using the example feature matrix; and
-- a documented GO-enrichment reproducibility template.
+- a Snakemake workflow; and
+- a generic SLURM submission example.
 
-The public examples are portfolio demonstrations. They should not be interpreted as clinical validation or as evidence for Alzheimer's disease mechanisms.
+## Public Data Scope
 
-## Data Sources and Privacy
+The executable demo uses:
 
-The broader project methodology drew on publicly available biological resources such as GWAS studies, GEO expression datasets, disease-gene association resources, Gene Ontology resources, and scientific literature.
+```text
+data/example_feature_matrix.csv
+```
 
-Raw research datasets are not included. Small example or synthetic files may be included solely to demonstrate code execution. See `data_description.md` for additional notes.
+This is a small example dataset intended to make the repository runnable without distributing research-scale biological data. See `data_description.md` for details about the public dataset and the distinction between the executable demo and broader project context.
 
 ## Technologies
 
@@ -77,7 +82,7 @@ alzheimers-gene-prediction-ml/
 
 ## How to Run
 
-### Environment
+### 1. Create an environment
 
 ```bash
 git clone https://github.com/Hemalatha18-bio/alzheimers-gene-prediction-ml.git
@@ -87,9 +92,9 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-On Windows, activate with `.venv\\Scripts\\activate`.
+On Windows, activate with `.venv\Scripts\activate`.
 
-### Model pipeline
+### 2. Run the model pipeline
 
 ```bash
 python src/model_pipeline.py \
@@ -98,9 +103,9 @@ python src/model_pipeline.py \
   --output results/model_metrics.json
 ```
 
-Scaling and PCA are fitted only on training data through model pipelines to reduce preprocessing leakage into the held-out test set.
+Scaling and PCA are fitted inside the model pipelines after the train/test split so preprocessing is learned from training data rather than the held-out test set.
 
-### Visualize exported metrics
+### 3. Generate model-comparison figures
 
 ```bash
 python src/visualize_results.py \
@@ -108,13 +113,9 @@ python src/visualize_results.py \
   --output-dir figures
 ```
 
-### Run tests
+The visualization script reads the exported model metrics rather than relying on hard-coded performance values.
 
-```bash
-pytest -q
-```
-
-### SHAP demonstration
+### 4. Run the SHAP demonstration
 
 ```bash
 python src/explain_model.py \
@@ -122,52 +123,79 @@ python src/explain_model.py \
   --output figures/shap_summary.png
 ```
 
-This is an explainability demonstration on example data, not a biological interpretation of Alzheimer's disease.
+The SHAP output is a methodological demonstration using example data and should not be interpreted as biological evidence.
 
-### Snakemake workflow
+### 5. Run tests
+
+```bash
+pytest -q
+```
+
+GitHub Actions runs the test suite automatically on pushes and pull requests targeting `main`.
+
+### 6. Run with Snakemake
 
 ```bash
 snakemake --snakefile workflow/Snakefile --cores 1
 ```
 
-The workflow connects the example feature matrix to model training and metric visualization. Configuration is stored in `workflow/config.yaml`.
+The workflow connects the example feature matrix to model training and visualization. Configuration is stored in `workflow/config.yaml`.
 
-### HPC / SLURM example
+### 7. HPC / SLURM example
 
-A generic submission script is provided at `hpc/run_model.slurm`. Cluster-specific modules, environments, resource requests, paths, and policies must be adapted to the target system.
+A generic submission script is provided at:
 
-## Continuous Integration
+```text
+hpc/run_model.slurm
+```
 
-`.github/workflows/ci.yml` runs the test suite on pushes and pull requests targeting `main`. This provides an automated check that the public code remains testable as the repository changes.
-
-## Gene Ontology Enrichment
-
-`examples/go_enrichment_template.md` documents what a reproducible GO-enrichment extension should record, including the input gene list, identifier type, background universe, multiple-testing correction, database/tool versions, and complete machine-readable outputs.
-
-It intentionally does **not** contain fabricated Alzheimer's enrichment results.
+Cluster-specific modules, environments, paths, account/partition settings, and resource requests should be adapted to the target HPC system.
 
 ## Outputs
 
-Model metrics are written to `results/model_metrics.json`. Model-comparison and SHAP demonstration figures are written under `figures/` when the corresponding scripts are run.
+The public demonstration writes model metrics to:
 
-## Broader Project Context
+```text
+results/model_metrics.json
+```
 
-The broader project work included multi-source biological data integration, high-dimensional feature processing, model experimentation, biological interpretation, and use of Linux/HPC resources. Quantitative claims are not presented as reproducible public-demo results unless the corresponding data and analysis are available in this repository.
+Model-comparison and SHAP demonstration figures are written under:
+
+```text
+figures/
+```
+
+Outputs generated from the included example data are demonstration results only.
+
+## Broader Project Experience
+
+The broader project work that motivated this repository involved experience with public biological resources and concepts such as genomic and transcriptomic data integration, disease-gene association resources, high-dimensional feature processing, dimensionality reduction, machine-learning experimentation, biological interpretation, enrichment-analysis concepts, and Linux/HPC execution.
+
+Those broader activities are **project context and experience, not all reproducible components of this public repository**. Quantitative claims from broader work are intentionally not presented here unless the supporting data and analysis are available in the repository.
+
+## Gene Ontology Enrichment Template
+
+`examples/go_enrichment_template.md` documents the information a reproducible enrichment analysis should record, including the input gene list, identifier type, background universe, multiple-testing correction, database/tool versions, and machine-readable outputs.
+
+It is a documentation template rather than an Alzheimer's enrichment result.
 
 ## Limitations
 
-- The public demo is not a clinical prediction system.
-- Example/synthetic data cannot establish biological validity or clinical performance.
-- SHAP explanations from demonstration data are methodological examples, not biological findings.
-- The GO-enrichment file is a reproducibility template, not an Alzheimer's enrichment result.
-- External validation would be required before drawing scientific conclusions.
+- The public demo uses a small example feature matrix rather than a research-scale cohort.
+- The current model evaluation uses a held-out test split rather than a full cross-validation benchmark.
+- The repository does not reproduce the complete original biological data-integration workflow.
+- Example-data SHAP outputs are methodological illustrations, not biological findings.
+- A fully reproducible enrichment analysis is not currently implemented.
+- External validation would be required before drawing scientific or clinical conclusions.
 
-## Possible Future Extensions
+## Future Improvements
 
-- Add cross-validation and hyperparameter tuning.
-- Add richer logging and additional input validation.
-- Add a fully reproducible GO-enrichment implementation when an appropriate public gene list and background universe are available.
-- Expand workflow orchestration if the public demo grows beyond the current compact pipeline.
+- Add stratified or repeated cross-validation.
+- Add hyperparameter tuning within cross-validation.
+- Strengthen numeric and missing-value validation.
+- Expand automated tests.
+- Commit clearly labeled generated example metrics and figures.
+- Add a fully reproducible enrichment implementation when an appropriate public gene list and background universe are available.
 
 ## Skills Demonstrated
 
