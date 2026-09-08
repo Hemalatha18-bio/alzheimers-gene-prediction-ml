@@ -29,47 +29,80 @@ def metrics_to_dataframe(metrics):
                 "Model": model_name,
                 "AUC": values.get("auc"),
                 "Accuracy": values.get("accuracy"),
+                "CV AUC": values.get("cv_auc_mean"),
+                "CV AUC SD": values.get("cv_auc_std"),
+                "CV Accuracy": values.get("cv_accuracy_mean"),
+                "CV Accuracy SD": values.get("cv_accuracy_std"),
             }
         )
     return pd.DataFrame(rows)
 
 
-def plot_model_auc(results, output_file):
-    if results["AUC"].isna().any():
-        raise ValueError("One or more models are missing AUC values.")
+def _save_bar_plot(results, value_column, output_file, ylabel, title, error_column=None):
+    if results[value_column].isna().any():
+        raise ValueError(f"One or more models are missing {value_column} values.")
 
     output_path = Path(output_file)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
+    errors = None
+    if error_column is not None:
+        if results[error_column].isna().any():
+            raise ValueError(f"One or more models are missing {error_column} values.")
+        errors = results[error_column]
+
     plt.figure(figsize=(8, 5))
-    plt.bar(results["Model"], results["AUC"])
-    plt.ylim(0, 1)
+    plt.bar(results["Model"], results[value_column], yerr=errors, capsize=4 if errors is not None else 0)
+    plt.ylim(0, 1.05)
     plt.xlabel("Machine Learning Model")
-    plt.ylabel("AUC Score")
-    plt.title("Model Performance Comparison")
+    plt.ylabel(ylabel)
+    plt.title(title)
     plt.xticks(rotation=15, ha="right")
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300)
+    plt.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close()
+
+
+def plot_model_auc(results, output_file):
+    _save_bar_plot(
+        results,
+        "AUC",
+        output_file,
+        "Hold-out AUC",
+        "Hold-out Model Performance (Example Data)",
+    )
 
 
 def plot_model_accuracy(results, output_file):
-    if results["Accuracy"].isna().any():
-        raise ValueError("One or more models are missing accuracy values.")
+    _save_bar_plot(
+        results,
+        "Accuracy",
+        output_file,
+        "Hold-out Accuracy",
+        "Hold-out Model Accuracy (Example Data)",
+    )
 
-    output_path = Path(output_file)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    plt.figure(figsize=(8, 5))
-    plt.bar(results["Model"], results["Accuracy"])
-    plt.ylim(0, 1)
-    plt.xlabel("Machine Learning Model")
-    plt.ylabel("Accuracy")
-    plt.title("Model Accuracy Comparison")
-    plt.xticks(rotation=15, ha="right")
-    plt.tight_layout()
-    plt.savefig(output_path, dpi=300)
-    plt.close()
+def plot_cv_auc(results, output_file):
+    _save_bar_plot(
+        results,
+        "CV AUC",
+        output_file,
+        "Repeated CV ROC-AUC",
+        "Repeated Stratified Cross-Validation AUC (Example Data)",
+        error_column="CV AUC SD",
+    )
+
+
+def plot_cv_accuracy(results, output_file):
+    _save_bar_plot(
+        results,
+        "CV Accuracy",
+        output_file,
+        "Repeated CV Accuracy",
+        "Repeated Stratified Cross-Validation Accuracy (Example Data)",
+        error_column="CV Accuracy SD",
+    )
 
 
 def parse_args():
@@ -93,6 +126,8 @@ def main():
     output_dir = Path(args.output_dir)
     plot_model_auc(results, output_dir / "model_auc_comparison.png")
     plot_model_accuracy(results, output_dir / "model_accuracy_comparison.png")
+    plot_cv_auc(results, output_dir / "model_cv_auc_comparison.svg")
+    plot_cv_accuracy(results, output_dir / "model_cv_accuracy_comparison.svg")
     print(f"Figures saved in {output_dir}")
 
 
