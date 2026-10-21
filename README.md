@@ -1,5 +1,55 @@
 # Machine Learning Pipeline for Alzheimer's Disease Gene Prediction
 
+## At a glance
+
+| Dimension | What the public repository demonstrates |
+| --- | --- |
+| **Aim** | Compare reproducible classification pipelines for an example biological feature matrix |
+| **Input** | Small [example feature matrix](data/example_feature_matrix.csv), not a clinical or research validation cohort |
+| **Models** | Random Forest, Support Vector Machine, XGBoost |
+| **Validation** | Stratified hold-out evaluation plus 3-fold, 2-repeat stratified cross-validation |
+| **Leakage control** | Scaling and optional PCA fitted **inside** each scikit-learn model pipeline and CV fold |
+| **Explainability** | SHAP demonstration using the example features |
+| **Engineering** | Input validation, pytest, GitHub Actions, Snakemake, SLURM example, JSON outputs |
+| **Interpretation** | Demonstrates software methods; does **not** establish Alzheimer's biomarkers or prediction accuracy |
+
+**Quick links:** [Model comparison](#reproducible-example-results) · [Run instructions](#how-to-run) · [Tests](#5-run-tests) · [Limitations](#limitations)
+
+### ML workflow
+
+```text
+Example feature matrix + binary labels
+                  |
+          Input validation
+                  |
+          Stratified splitting
+                  |
+    +-------------+-------------+
+    |             |             |
+Random Forest    SVM          XGBoost
+    |             |             |
+    +-------------+-------------+
+                  |
+   Preprocessing fitted inside
+     training/CV folds (PCA
+       where configured)
+                  |
+     Repeated stratified CV
+                  |
+     ROC-AUC / accuracy JSON
+                  |
+     Comparison plot + SHAP
+     example-data explanation
+                  |
+        pytest / CI / Snakemake
+```
+
+### Model comparison preview
+
+![Example-data CV ROC-AUC model comparison](figures/model_cv_auc_comparison.svg)
+
+*Visualization uses the intentionally small example dataset. Near-perfect cross-validation scores are **not** scientific or clinical performance estimates.*
+
 ## Overview
 
 This portfolio repository presents a reproducible machine-learning demonstration for biological feature data, motivated by broader Alzheimer's disease bioinformatics work involving genomic, transcriptomic, and disease-gene association resources.
