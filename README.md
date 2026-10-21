@@ -1,5 +1,7 @@
 # Machine Learning Pipeline for Alzheimer's Disease Gene Prediction
 
+[![CI](https://github.com/Hemalatha18-bio/alzheimers-gene-prediction-ml/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Hemalatha18-bio/alzheimers-gene-prediction-ml/actions/workflows/ci.yml)
+
 ## At a glance
 
 | Dimension | What the public repository demonstrates |
